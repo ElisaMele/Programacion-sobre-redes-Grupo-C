@@ -8,6 +8,8 @@ type Props = {
   wasCorrect: boolean;
   onNext: () => void;
   isLastLevel: boolean;
+  lives: number;
+  onGameOver: () => void;
 };
 
 export const ResultScreen = ({
@@ -15,17 +17,29 @@ export const ResultScreen = ({
   wasCorrect,
   onNext,
   isLastLevel,
+  lives,
+  onGameOver,
 }: Props) => {
   return (
     <div>
-      <h1>
-        {wasCorrect ? "✅ Correcto" : "❌ Incorrecto"}
-      </h1>
+      <p>
+        {wasCorrect
+          ? "✅ Correcto, ¡avanzaste al siguiente nivel!"
+          : "❌ Incorrecto, intenta de nuevo"}
+      </p>
 
       <p>{level.explanation}</p>
 
-      <button onClick={onNext}>
-        {isLastLevel ? "Ver resultado final" : "Siguiente nivel"}
+      <button
+        onClick={() => {
+          if (lives <= 0) {
+            onGameOver();
+          } else {
+            onNext();
+          }
+        }}
+      >
+        {lives <= 0 ? "Reintentar" : "Ver siguiente nivel"}
       </button>
     </div>
   );

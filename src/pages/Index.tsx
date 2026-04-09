@@ -15,6 +15,7 @@ const Index = () => {
   const level = levels[currentLevel];
   const [lives, setLives] = useState(3);
   const [score, setScore] = useState(0);
+  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
 
   if (gameState === "start") {
   return (
@@ -29,31 +30,48 @@ const handleAnswer = (id: string) => {
   if (answered) return;
 
   setAnswered(true);
+  setSelectedAnswer(id);
 
   const isCorrect = id === level.correctAnswer;
   setLastAnswerCorrect(isCorrect);
 
   if (isCorrect) {
     setScore((prev) => prev + 150);
-} else {
-    setLives((prev) => prev - 1);
-}
-
-  setTimeout(() => {
-    if (!isCorrect && lives - 1 <= 0) {
-      setGameState("gameover");
-    } else {
+    setTimeout(() => {
       setGameState("result");
+      setAnswered(false);
+    }, 500);
+  } else {
+
+    const newLives = lives - 1;
+    setLives(newLives);
+
+    if (newLives <= 0) {
+
+      setTimeout(() => setGameState("gameover"), 500);
+    } else {
+
+      setTimeout(() => setGameState("result"), 500);
     }
 
-    setAnswered(false);
-  }, 500);
+    setTimeout(() => setAnswered(false), 500);
+  }
 };
 
 const handleNext = () => {
+
+  if (lives <= 0) {
+    setGameState("start");
+    setCurrentLevel(0);
+    setScore(0);
+    setLives(3);
+    return;
+  }
+
   if (currentLevel >= levels.length - 1) {
     setGameState("victory");
   } else {
+
     setCurrentLevel((prev) => prev + 1);
     setGameState("playing");
   }
@@ -66,6 +84,8 @@ if (gameState === "result" && lastAnswerCorrect !== null) {
       wasCorrect={lastAnswerCorrect}
       onNext={handleNext}
       isLastLevel={currentLevel >= levels.length - 1}
+      lives={lives}
+      onGameOver={() => setGameState("gameover")}
     />
   );
 }
@@ -105,6 +125,7 @@ if (gameState === "victory") {
       currentLevel={currentLevel}
       totalLevels={levels.length}
       answered={answered}
+      selectedAnswer={selectedAnswer}
       onAnswer={handleAnswer}
     />
   );
