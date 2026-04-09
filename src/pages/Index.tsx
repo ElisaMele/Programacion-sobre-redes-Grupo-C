@@ -3,6 +3,7 @@ import { useState } from "react";
 import { StartScreen } from "../components/StartScreen";
 import { GamePlay } from "../components/GamePlay";
 import { ResultScreen } from "../components/ResultScreen";
+import { GameOverScreen } from "../components/GameOverScreen";
 
 const Index = () => {
 
@@ -11,6 +12,7 @@ const Index = () => {
   const [lastAnswerCorrect, setLastAnswerCorrect] = useState<boolean | null>(null);
   const [answered, setAnswered] = useState(false);
   const level = levels[currentLevel];
+  const [lives, setLives] = useState(3);
 
   if (gameState === "start") {
   return (
@@ -27,11 +29,19 @@ const handleAnswer = (id: string) => {
   setAnswered(true);
 
   const isCorrect = id === level.correctAnswer;
-
   setLastAnswerCorrect(isCorrect);
 
+  if (!isCorrect) {
+    setLives((prev) => prev - 1);
+  }
+
   setTimeout(() => {
-    setGameState("result");
+    if (!isCorrect && lives - 1 <= 0) {
+      setGameState("gameover");
+    } else {
+      setGameState("result");
+    }
+
     setAnswered(false);
   }, 500);
 };
@@ -70,9 +80,22 @@ if (gameState === "result" && lastAnswerCorrect !== null) {
   );
 }
 
+if (gameState === "gameover") {
+  return (
+    <GameOverScreen
+      onRestart={() => {
+        setLives(3);
+        setCurrentLevel(0);
+        setGameState("start");
+      }}
+    />
+  );
+}
+
   return (
     <GamePlay
       level={level}
+      lives={lives}
       currentLevel={currentLevel}
       totalLevels={levels.length}
       answered={answered}

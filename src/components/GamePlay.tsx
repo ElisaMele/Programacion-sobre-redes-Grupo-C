@@ -15,6 +15,7 @@ type Props = {
   currentLevel: number;
   totalLevels: number;
   answered: boolean;
+  lives: number;
   onAnswer: (id: string) => void;
 };
 
@@ -23,11 +24,13 @@ export const GamePlay = ({
   currentLevel,
   totalLevels,
   answered,
+  lives,
   onAnswer,
 }: Props) => {
   return (
     <div>
       <p>Nivel {currentLevel + 1} / {totalLevels}</p>
+      <p>❤️ Vidas: {lives}</p>
 
       <h1>{level.title}</h1>
       <p>{level.narrative}</p>
