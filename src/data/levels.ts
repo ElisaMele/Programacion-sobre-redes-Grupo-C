@@ -21,7 +21,7 @@ export interface Level {
 export const levels: Level[] = [
   {
     id: 1,
-    title: "FIREWALL BREACH",
+    title: "Network Scape Room",
     narrative: "Has sido atrapado dentro de una red corporativa...",
     timerMessage: "⚠ El firewall se reiniciará en {time}s...",
     question: "¿Qué es un Firewall?",

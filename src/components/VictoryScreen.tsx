@@ -3,16 +3,16 @@ type Props = {
   onRestart: () => void;
 };
 
-export const GameOverScreen = ({ score, onRestart }: Props) => {
+export const VictoryScreen = ({ score, onRestart }: Props) => {
   return (
     <div>
-      <h1>💀 Sistema bloqueado</h1>
-      <p>Te quedaste sin vidas...</p>
-      
+      <h1>🎉 ¡Escapaste de la red!</h1>
+      <p>Completaste todos los niveles</p>
+
       <p>⭐ Puntaje final: {score}</p>
 
       <button onClick={onRestart}>
-        🔄 Reintentar
+        🔄 Jugar de nuevo
       </button>
     </div>
   );

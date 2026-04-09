@@ -4,6 +4,7 @@ import { StartScreen } from "../components/StartScreen";
 import { GamePlay } from "../components/GamePlay";
 import { ResultScreen } from "../components/ResultScreen";
 import { GameOverScreen } from "../components/GameOverScreen";
+import { VictoryScreen } from "../components/VictoryScreen";
 
 const Index = () => {
 
@@ -13,6 +14,7 @@ const Index = () => {
   const [answered, setAnswered] = useState(false);
   const level = levels[currentLevel];
   const [lives, setLives] = useState(3);
+  const [score, setScore] = useState(0);
 
   if (gameState === "start") {
   return (
@@ -31,9 +33,11 @@ const handleAnswer = (id: string) => {
   const isCorrect = id === level.correctAnswer;
   setLastAnswerCorrect(isCorrect);
 
-  if (!isCorrect) {
+  if (isCorrect) {
+    setScore((prev) => prev + 150);
+} else {
     setLives((prev) => prev - 1);
-  }
+}
 
   setTimeout(() => {
     if (!isCorrect && lives - 1 <= 0) {
@@ -55,20 +59,6 @@ const handleNext = () => {
   }
 };
 
-if (currentLevel >= levels.length) {
-  return (
-    <div>
-      <h1>🎉 ¡Escapaste de la red!</h1>
-      <button onClick={() => {
-        setCurrentLevel(0);
-        setGameState("start");
-      }}>
-        Volver a jugar
-      </button>
-    </div>
-  );
-}
-
 if (gameState === "result" && lastAnswerCorrect !== null) {
   return (
     <ResultScreen
@@ -83,8 +73,23 @@ if (gameState === "result" && lastAnswerCorrect !== null) {
 if (gameState === "gameover") {
   return (
     <GameOverScreen
+      score={score}
       onRestart={() => {
         setLives(3);
+        setCurrentLevel(0);
+        setGameState("start");
+      }}
+    />
+  );
+}
+
+if (gameState === "victory") {
+  return (
+    <VictoryScreen
+      score={score}
+      onRestart={() => {
+        setLives(3);
+        setScore(0);
         setCurrentLevel(0);
         setGameState("start");
       }}
@@ -96,6 +101,7 @@ if (gameState === "gameover") {
     <GamePlay
       level={level}
       lives={lives}
+      score={score}
       currentLevel={currentLevel}
       totalLevels={levels.length}
       answered={answered}
