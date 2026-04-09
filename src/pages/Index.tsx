@@ -1,71 +1,85 @@
 import { levels } from "../data/levels";
 import { useState } from "react";
+import { StartScreen } from "../components/StartScreen";
+import { GamePlay } from "../components/GamePlay";
+import { ResultScreen } from "../components/ResultScreen";
 
 const Index = () => {
 
-  const [gameState, setGameState] = useState("start");
-  const [feedback, setFeedback] = useState("");
   const [currentLevel, setCurrentLevel] = useState(0);
+  const [gameState, setGameState] = useState("start");
+  const [lastAnswerCorrect, setLastAnswerCorrect] = useState<boolean | null>(null);
+  const [answered, setAnswered] = useState(false);
   const level = levels[currentLevel];
 
   if (gameState === "start") {
   return (
-    <div>
-      <h1>🧠 Network Escape Challenge</h1>
-
-      <p>
-        Has sido atrapado dentro de una red corporativa.
-        Deberás responder correctamente para escapar.
-      </p>
-
-      <ul>
-        <li>✔ Respondé bien para avanzar</li>
-        <li>❌ Si fallás, quedás expuesto</li>
-        <li>⏱ El sistema te está rastreando...</li>
-      </ul>
-
-      <p>Niveles: {levels.length}</p>
-
-      <button onClick={() => setGameState("playing")}>
-        ▶ Iniciar misión
-      </button>
-    </div>
+    <StartScreen
+      onStart={() => setGameState("playing")}
+      totalLevels={levels.length}
+    />
   );
 }
 
 const handleAnswer = (id: string) => {
-  if (id === level.correctAnswer) {
-    setFeedback("✅ Correcto");
+  if (answered) return;
 
-    setTimeout(() => {
-      setCurrentLevel((prev) => prev + 1);
-      setFeedback("");
-    }, 1000);
+  setAnswered(true);
+
+  const isCorrect = id === level.correctAnswer;
+
+  setLastAnswerCorrect(isCorrect);
+
+  setTimeout(() => {
+    setGameState("result");
+    setAnswered(false);
+  }, 500);
+};
+
+const handleNext = () => {
+  if (currentLevel >= levels.length - 1) {
+    setGameState("victory");
   } else {
-    setFeedback("❌ Incorrecto");
+    setCurrentLevel((prev) => prev + 1);
+    setGameState("playing");
   }
 };
 
 if (currentLevel >= levels.length) {
-  return <h1>🎉 ¡Ganaste!</h1>;
+  return (
+    <div>
+      <h1>🎉 ¡Escapaste de la red!</h1>
+      <button onClick={() => {
+        setCurrentLevel(0);
+        setGameState("start");
+      }}>
+        Volver a jugar
+      </button>
+    </div>
+  );
+}
+
+if (gameState === "result" && lastAnswerCorrect !== null) {
+  return (
+    <ResultScreen
+      level={level}
+      wasCorrect={lastAnswerCorrect}
+      onNext={handleNext}
+      isLastLevel={currentLevel >= levels.length - 1}
+    />
+  );
 }
 
   return (
-    <div>
-      <h1>{level.title}</h1>
-      <p>{level.narrative}</p>
-      <h2>{level.question}</h2>
-
-      {level.choices.map((choice) => (
-      <button key={choice.id} onClick={() => handleAnswer(choice.id)}>
-    {choice.text}
-      </button>
-  
-))}
-
-    <p>{feedback}</p>
-    </div>
+    <GamePlay
+      level={level}
+      currentLevel={currentLevel}
+      totalLevels={levels.length}
+      answered={answered}
+      onAnswer={handleAnswer}
+    />
   );
+
 };
 
 export default Index;
