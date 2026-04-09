@@ -1,10 +1,5 @@
 import type { Level } from "../data/levels";
 
-type Choice = {
-  id: string;
-  text: string;
-};
-
 type Props = {
   level: Level;
   currentLevel: number;

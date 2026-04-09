@@ -1,10 +1,6 @@
 type Props = {
-  level: Level;
-  wasCorrect: boolean;
-  onNext: () => void;
-  isLastLevel: boolean;
-  lives: number;
-  onGameOver: () => void;
+  score: number;
+  onRestart: () => void;
 };
 
 export const VictoryScreen = ({ score, onRestart }: Props) => {

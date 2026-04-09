@@ -16,7 +16,6 @@ export const ResultScreen = ({
   level,
   wasCorrect,
   onNext,
-  isLastLevel,
   lives,
   onGameOver,
 }: Props) => {
