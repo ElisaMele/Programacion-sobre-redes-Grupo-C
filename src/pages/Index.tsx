@@ -7,6 +7,7 @@ import { ResultScreen } from "@/components/ResultScreen";
 import { GameOverScreen } from "@/components/GameOverScreen";
 import { VictoryScreen } from "@/components/VictoryScreen";
 import { MatrixRain } from "@/components/MatrixRain";
+import { WrongAnswerScreen } from "@/components/WrongAnswerScreen";
 
 const Index = () => {
   const game = useGameStore();
@@ -50,7 +51,7 @@ const Index = () => {
         {game.state === "result" && currentLevel && lastAnswer && (
           <ResultScreen
             level={currentLevel}
-            wasCorrect={lastAnswer.correct}
+            wasCorrect={lastAnswer?.correct ?? false}
             lives={game.lives}
             onNext={game.nextLevel}
             isLastLevel={game.currentLevel >= levels.length - 1}
@@ -60,7 +61,6 @@ const Index = () => {
         {game.state === "gameover" && (
           <GameOverScreen
             score={game.score}
-            levelsCompleted={game.answers.filter(a => a.correct).length}
             onRestart={game.resetGame}
           />
         )}
@@ -70,6 +70,13 @@ const Index = () => {
             score={game.score}
             answers={game.answers}
             onRestart={game.resetGame}
+          />
+        )}
+
+        {game.state === "wrong" && (
+          <WrongAnswerScreen
+            explanation="Respuesta incorrecta"
+            onContinue={game.nextLevel}
           />
         )}
 

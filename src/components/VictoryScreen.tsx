@@ -1,5 +1,8 @@
+import type { Answer } from "@/hooks/useGameStore";
+
 type Props = {
   score: number;
+  answers: Answer[];
   onRestart: () => void;
 };
 

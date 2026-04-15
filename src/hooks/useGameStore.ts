@@ -1,25 +1,37 @@
 import { useState, useCallback, useEffect } from "react";
-import { levels } from "../data/levels";
+import { levels } from "@/data/levels";
 
 export type GameState =
   | "start"
   | "playing"
   | "result"
+  | "wrong"
   | "gameover"
   | "victory";
 
-type Answer = {
+export type Answer = {
   levelId: number;
   correct: boolean;
   timeLeft: number;
 };
 
-export function useGameStore() {
+interface GameStore {
+  state: GameState;
+  currentLevel: number;
+  score: number;
+  lives: number;
+  answers: Answer[];
+  startGame: () => void;
+  answerQuestion: (id: string, timeLeft: number) => void;
+  nextLevel: () => void;
+  resetGame: () => void;
+}
+
+export function useGameStore(): GameStore {
   const [state, setState] = useState<GameState>("start");
   const [currentLevel, setCurrentLevel] = useState(0);
   const [score, setScore] = useState(0);
   const [lives, setLives] = useState(3);
-
   const [answers, setAnswers] = useState<Answer[]>([]);
 
   const startGame = useCallback(() => {
@@ -49,11 +61,11 @@ export function useGameStore() {
 
       if (correct) {
         setScore((s) => s + 100 + timeLeft * 5);
+        setState("result");
       } else {
         setLives((l) => Math.max(0, l - 1));
+        setState("wrong");
       }
-
-      setState("result");
     },
     [currentLevel]
   );

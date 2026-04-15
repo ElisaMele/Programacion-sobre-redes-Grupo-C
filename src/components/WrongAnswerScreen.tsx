@@ -1,63 +1,75 @@
 import { motion } from "framer-motion";
+import nedryGif from "@/assets/nedry.gif";
+import { useEffect, useRef } from "react";
 
 interface WrongAnswerScreenProps {
   explanation: string;
   onContinue: () => void;
 }
 
-export function WrongAnswerScreen({ explanation, onContinue }: WrongAnswerScreenProps) {
+export function WrongAnswerScreen({
+  explanation,
+  onContinue,
+}: WrongAnswerScreenProps) {
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    const audio = new Audio("/sounds/nedry.mp3");
+    audioRef.current = audio;
+    audio.play().catch(() => {});
+
+    const timer = setTimeout(() => {
+      onContinue();
+    }, 3000);
+
+    return () => {
+      audio.pause();
+      audio.currentTime = 0;
+      clearTimeout(timer);
+    };
+  }, [onContinue]);
+
   return (
     <motion.div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 px-6 text-center relative overflow-hidden"
+      className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/95 backdrop-blur-md px-4"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
     >
+      <div className="absolute inset-0 pointer-events-none bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,rgba(255,0,0,0.03)_2px,rgba(255,0,0,0.03)_4px)]" />
 
-      {/* 🔥 scanlines / glitch overlay */}
-      <div className="absolute inset-0 pointer-events-none bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,rgba(255,0,0,0.04)_2px,rgba(255,0,0,0.04)_4px)]" />
-
-      {/* contenido */}
       <motion.div
-        className="max-w-md w-full space-y-6"
-        initial={{ scale: 0.85, opacity: 0, y: 20 }}
-        animate={{ scale: 1, opacity: 1, y: 0 }}
-        transition={{ type: "spring", stiffness: 200, damping: 15 }}
+        className="flex flex-col items-center max-w-md w-full"
+        initial={{ scale: 0.5, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ type: "spring", damping: 12, stiffness: 200 }}
       >
+        <motion.img
+          src={nedryGif}
+          alt="Nedry"
+          className="w-52 h-52 md:w-64 md:h-64 object-contain mb-6"
+          animate={{ rotate: [0, -2, 2, -2, 0] }}
+          transition={{ repeat: Infinity, duration: 0.5, repeatDelay: 2 }}
+        />
 
-        {/* título tipo sistema */}
-        <motion.h1
-          className="text-4xl font-bold text-red-500 tracking-widest"
-          animate={{ opacity: [1, 0.4, 1] }}
-          transition={{ repeat: Infinity, duration: 1.2 }}
+        <motion.h2
+          className="text-4xl font-bold text-red-500 tracking-widest mb-2"
+          animate={{ opacity: [1, 0.5, 1] }}
+          transition={{ repeat: Infinity, duration: 1.5 }}
         >
           AH AH AH!
-        </motion.h1>
+        </motion.h2>
 
-        <p className="text-white/70 text-sm">
-          ACCESO DENEGADO
+        <p className="text-lg text-white/80 text-center mb-6">
+          You didn't say the magic word
         </p>
 
-        {/* explicación */}
-        <div className="bg-red-900/20 border border-red-500/40 p-4 rounded-sm">
-          <p className="text-xs text-red-400 font-mono mb-2">
-            [SYSTEM ERROR]
+        <div className="border border-red-500/30 bg-red-500/10 p-4 mb-6 w-full">
+          <p className="text-sm text-red-400 font-bold mb-2">
+            ✗ ACCESO DENEGADO
           </p>
-          <p className="text-sm text-white/80 leading-relaxed">
-            {explanation}
-          </p>
+          <p className="text-sm text-white/70">{explanation}</p>
         </div>
-
-        {/* botón */}
-        <motion.button
-          onClick={onContinue}
-          className="px-8 py-3 border border-red-500 text-red-400 hover:bg-red-500/10 rounded-sm tracking-widest transition-all font-mono"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          [ CONTINUAR ]
-        </motion.button>
-
       </motion.div>
     </motion.div>
   );
