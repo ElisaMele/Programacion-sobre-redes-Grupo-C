@@ -19,38 +19,70 @@ export function ResultScreen({
   isLastLevel,
 }: Props) {
   return (
-    <div className="min-h-screen flex items-center justify-center px-4">
-
-      <Card className="bg-black/90 border-green-500/30 text-center max-w-md w-full">
-        <CardContent className="p-8 space-y-4">
+    <motion.div
+      className="min-h-screen flex items-center justify-center px-4"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+    >
+      <Card className=" text-center">
+        <CardContent className="p-8 space-y-6">
 
           <motion.div
-            className={`text-5xl font-bold ${
+            className={`text-6xl font-bold ${
               wasCorrect ? "text-green-400" : "text-red-500"
             }`}
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
+            transition={{ type: "spring", damping: 10 }}
           >
             {wasCorrect ? "✓" : "✗"}
           </motion.div>
 
-          <h2 className="text-xl font-bold text-green-400">
-            {wasCorrect ? "ACCESS GRANTED" : "ACCESS DENIED"}
+          <h2
+            className={`text-2xl font-bold tracking-wider ${
+              wasCorrect ? "text-green-400" : "text-red-500"
+            }`}
+          >
+            {wasCorrect
+              ? "NODO DESBLOQUEADO"
+              : "ACCESO DENEGADO"}
           </h2>
 
-          <p className="text-green-300/60 text-sm">
+          <p className="text-green-300/70 text-sm">
             {wasCorrect
-              ? "Nodo desbloqueado"
-              : `Te quedan ${lives} vidas`}
+              ? "Has avanzado al siguiente nodo de la red."
+              : `Te quedan ${lives} vida${lives !== 1 ? "s" : ""}.`}
           </p>
 
-          <Button onClick={onNext} className="w-full">
-            {isLastLevel ? "FINAL RESULT" : "CONTINUE"}
-          </Button>
+          {wasCorrect && (
+            <motion.div
+              className="border border-green-500/30 bg-green-500/5 p-4 rounded"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <p className="text-green-400 font-bold text-sm">
+                ✓ ACCESO CONCEDIDO
+              </p>
+            </motion.div>
+          )}
+
+          {lives > 0 && (
+            <Button
+              onClick={onNext}
+              className={`w-full font-bold tracking-wider ${
+                wasCorrect
+                  ? "bg-green-500 hover:bg-green-400 text-black"
+                  : "bg-red-500 hover:bg-red-400 text-black"
+              }`}
+            >
+              {isLastLevel && wasCorrect
+                ? "> RESULTADO FINAL <"
+                : "> CONTINUAR <"}
+            </Button>
+          )}
 
         </CardContent>
       </Card>
-
-    </div>
+    </motion.div>
   );
 }

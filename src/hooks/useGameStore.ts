@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { levels } from "@/data/levels";
 
 export type GameState =
@@ -25,6 +25,7 @@ interface GameStore {
   answerQuestion: (id: string, timeLeft: number) => void;
   nextLevel: () => void;
   resetGame: () => void;
+  continueAfterWrong: () => void;
 }
 
 export function useGameStore(): GameStore {
@@ -63,12 +64,25 @@ export function useGameStore(): GameStore {
         setScore((s) => s + 100 + timeLeft * 5);
         setState("result");
       } else {
-        setLives((l) => Math.max(0, l - 1));
+        setLives((l) => {
+          const newLives = l - 1;
+
+          if (newLives <= 0) {
+            setTimeout(() => setState("gameover"), 1500);
+          }
+
+          return newLives;
+        });
+
         setState("wrong");
       }
     },
     [currentLevel]
   );
+
+  const continueAfterWrong = useCallback(() => {
+    setState("result");
+  }, []);
 
   const nextLevel = useCallback(() => {
     setCurrentLevel((prev) => {
@@ -92,12 +106,6 @@ export function useGameStore(): GameStore {
     setAnswers([]);
   }, []);
 
-  useEffect(() => {
-    if (lives <= 0) {
-      setState("gameover");
-    }
-  }, [lives]);
-
   return {
     state,
     currentLevel,
@@ -108,5 +116,6 @@ export function useGameStore(): GameStore {
     answerQuestion,
     nextLevel,
     resetGame,
+    continueAfterWrong,
   };
 }

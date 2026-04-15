@@ -12,7 +12,7 @@ export function WrongAnswerScreen({
   onContinue,
 }: WrongAnswerScreenProps) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
 useEffect(() => {
   const audio = new Audio("/sounds/nedry.mp3");

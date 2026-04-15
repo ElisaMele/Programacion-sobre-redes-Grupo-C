@@ -76,7 +76,7 @@ const Index = () => {
         {game.state === "wrong" && (
           <WrongAnswerScreen
             explanation="Respuesta incorrecta"
-            onContinue={game.nextLevel}
+            onContinue={game.continueAfterWrong}
           />
         )}
 
