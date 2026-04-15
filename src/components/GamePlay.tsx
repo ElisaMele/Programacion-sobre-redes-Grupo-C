@@ -1,10 +1,9 @@
 import { useEffect, useRef, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import type { Level } from "@/data/levels";
 
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { HUD } from "@/components/HUD";
 import { TimerBar } from "@/components/TimerBar";
+import { HUD } from "@/components/HUD";
 
 type Props = {
   level: Level;
@@ -31,38 +30,56 @@ export function GamePlay({
   const [selected, setSelected] = useState<string | null>(null);
   const [revealed, setRevealed] = useState(false);
 
-  const [flash, setFlash] = useState<"correct" | "wrong" | null>(null);
-
   useEffect(() => {
     setSelected(null);
     setRevealed(false);
-    setFlash(null);
     startTimeRef.current = Date.now();
   }, [level.id]);
 
+  const handleSelect = (choiceId: string) => {
+    if (revealed || answered) return;
+
+    const elapsed = Math.floor(
+      (Date.now() - startTimeRef.current) / 1000
+    );
+
+    const timeLeft = Math.max(0, TIMER_DURATION - elapsed);
+
+    setSelected(choiceId);
+    setRevealed(true);
+
+    setTimeout(() => {
+      onAnswer(choiceId, timeLeft);
+    }, 600);
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 relative">
+    <div className="min-h-screen flex flex-col">
 
-      {flash && (
-        <div
-          className={`
-            fixed inset-0 z-50 pointer-events-none transition-opacity duration-200
-            ${flash === "correct" ? "bg-green-500/10" : "bg-red-500/10"}
-          `}
-        />
-      )}
+      <HUD
+        level={currentLevel + 1}
+        totalLevels={totalLevels}
+        score={score}
+        lives={lives}
+      />
 
-      <div className="w-full max-w-2xl space-y-4 z-10">
+      <div className="flex-1 flex flex-col items-center justify-center px-4 py-6 max-w-3xl mx-auto w-full">
 
-        <HUD
-          level={currentLevel + 1}
-          totalLevels={totalLevels}
-          score={score}
-          lives={lives}
-        />
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={level.id}
+            className="w-full space-y-6"
+            initial={{ opacity: 0, x: 40 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -40 }}
+            transition={{ duration: 0.3 }}
+          >
 
-        <Card className="bg-black/80 border-green-500/20">
-          <CardContent className="space-y-4 p-6">
+            <div className="text-center space-y-2">
+              <h2 className="text-xl md:text-2xl font-bold text-green-400">
+                [{level.title}]
+              </h2>
+            </div>
 
             <TimerBar
               duration={TIMER_DURATION}
@@ -72,62 +89,71 @@ export function GamePlay({
               }}
             />
 
-            <h1 className="text-green-400 font-bold text-lg">
-              {level.title}
-            </h1>
+            <div className="border border-green-500/30 bg-black/60 p-5 rounded">
+              <p className="text-green-300 text-base md:text-lg leading-relaxed">
+                <span className="text-green-500 mr-2">$</span>
+                {level.question}
+              </p>
+            </div>
 
-            <p className="text-green-300/70">
-              {level.question}
-            </p>
-
-            <div className="space-y-2">
-              {level.choices.map((choice) => {
+            <div className="grid gap-3">
+              {level.choices.map((choice, i) => {
                 const isCorrect = choice.id === level.correctAnswer;
                 const isSelected = choice.id === selected;
 
+                let style =
+                  "border border-green-500/20 bg-black/40 hover:bg-green-500/10";
+
+                if (revealed) {
+                  if (isCorrect) {
+                    style = "border-green-500 bg-green-500/10";
+                  } else if (isSelected) {
+                    style = "border-red-500 bg-red-500/10";
+                  } else {
+                    style = "opacity-50";
+                  }
+                }
+
                 return (
-                  <Button
+                  <motion.button
                     key={choice.id}
-                    disabled={answered || revealed}
-                    onClick={() => {
-                      if (answered || revealed) return;
-
-                      const elapsed = Math.floor(
-                        (Date.now() - startTimeRef.current) / 1000
-                      );
-
-                      const timeLeft = Math.max(0, TIMER_DURATION - elapsed);
-
-                      const correct = choice.id === level.correctAnswer;
-
-                      setSelected(choice.id);
-                      setRevealed(true);
-
-                      setFlash(correct ? "correct" : "wrong");
-
-                      setTimeout(() => {
-                        setFlash(null);
-                        onAnswer(choice.id, timeLeft);
-                      }, 600);
-                    }}
-                    className={`w-full justify-start transition-all duration-200 active:scale-[0.98] ${
-                      revealed
-                        ? isCorrect
-                          ? "bg-green-600 text-black"
-                          : isSelected
-                            ? "bg-red-600"
-                            : "bg-gray-800 opacity-50"
-                        : "bg-green-500/10 hover:bg-green-500/20"
-                    }`}
+                    onClick={() => handleSelect(choice.id)}
+                    disabled={revealed || answered}
+                    className={`w-full text-left p-4 rounded transition-all ${style}`}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 * i }}
+                    whileHover={!revealed ? { scale: 1.02 } : {}}
+                    whileTap={!revealed ? { scale: 0.98 } : {}}
                   >
-                    {choice.text}
-                  </Button>
+                    <span className="text-green-500 mr-3">
+                      [{choice.id.toUpperCase()}]
+                    </span>
+                    <span>{choice.text}</span>
+                  </motion.button>
                 );
               })}
             </div>
 
-          </CardContent>
-        </Card>
+            <AnimatePresence>
+              {revealed && selected === level.correctAnswer && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  className="p-4 border border-green-500 bg-green-500/5 rounded"
+                >
+                  <p className="font-bold text-green-400 mb-2">
+                    ✓ ACCESO CONCEDIDO
+                  </p>
+                  <p className="text-green-300/70 text-sm">
+                    {level.explanation}
+                  </p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+          </motion.div>
+        </AnimatePresence>
 
       </div>
     </div>
