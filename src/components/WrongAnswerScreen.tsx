@@ -65,7 +65,7 @@ useEffect(() => {
           You didn't say the magic word
         </p>
 
-        <div className="border border-red-500/30 bg-red-500/10 rounded p-4 mb-6 w-full">
+        <div className="border border-red-500/30 bg-red-500/10 rounded-none p-4 mb-6 w-full">
           <p className="font-bold text-sm mb-2 text-red-500">
             ✗ ACCESO DENEGADO
           </p>
@@ -76,7 +76,7 @@ useEffect(() => {
 
         <motion.button
           onClick={handleContinue}
-          className="px-6 py-2 border border-red-500 text-red-500 hover:bg-red-500/10 rounded transition-all"
+          className="px-6 py-2 border border-red-500 text-red-500 hover:bg-red-500/10 rounded-none transition-all"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >

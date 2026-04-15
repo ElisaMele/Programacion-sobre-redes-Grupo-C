@@ -54,7 +54,7 @@ export function ResultScreen({
         {/* 👇 ACÁ VA LA EXPLICACIÓN (ANTES DEL BOTÓN) */}
         {!wasCorrect && (
           <motion.div
-            className="border border-red-500/40 bg-black/60 p-4 rounded"
+            className="border border-red-500/40 bg-black/60 p-4 rounded-none"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
           >
@@ -70,7 +70,7 @@ export function ResultScreen({
         {lives > 0 && (
           <motion.button
             onClick={onNext}
-            className={`px-8 py-3 font-display font-bold rounded-sm tracking-wider transition-all ${
+            className={`px-8 py-3 font-display font-bold rounded-none tracking-wider transition-all ${
               wasCorrect
                 ? "bg-green-500 text-black hover:bg-green-400"
                 : "bg-red-500 text-black hover:bg-red-400"

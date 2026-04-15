@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Level } from "@/data/levels";
 
@@ -25,51 +25,30 @@ export function GamePlay({
   onAnswer,
 }: Props) {
   const TIMER_DURATION = 60;
-  const startTimeRef = useRef(Date.now());
 
   const [selected, setSelected] = useState<string | null>(null);
   const [revealed, setRevealed] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(TIMER_DURATION);
-
-  useEffect(() => {
-  if (revealed || answered) return;
-
-  const interval = setInterval(() => {
-    setTimeLeft((prev) => {
-      if (prev <= 1) {
-        clearInterval(interval);
-        onAnswer("timeout", 0);
-        return 0;
-      }
-      return prev - 1;
-    });
-  }, 1000);
-
-  return () => clearInterval(interval);
-}, [revealed, answered, onAnswer]);
 
   useEffect(() => {
     setSelected(null);
     setRevealed(false);
-    startTimeRef.current = Date.now();
-    setTimeLeft(TIMER_DURATION);
   }, [level.id]);
 
   const handleSelect = (choiceId: string) => {
-  if (revealed || answered) return;
+    if (revealed || answered) return;
 
-  const currentTimeLeft = timeLeft;
+    setSelected(choiceId);
+    setRevealed(true);
 
-  setSelected(choiceId);
-  setRevealed(true);
-
-  setTimeout(() => {
-    onAnswer(choiceId, currentTimeLeft);
-  }, 600);
-};
+    setTimeout(() => {
+      onAnswer(choiceId, 0);
+    }, 600);
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
+
+      <div className="scanline" />
 
       <HUD
         level={currentLevel + 1}
@@ -78,7 +57,7 @@ export function GamePlay({
         lives={lives}
       />
 
-      <div className="flex-1 flex flex-col items-center justify-center px-4 py-6 max-w-3xl mx-auto w-full">
+      <div className="flex-1 flex flex-col w-full px-4 py-6">
 
         <AnimatePresence mode="wait">
           <motion.div
@@ -96,34 +75,15 @@ export function GamePlay({
               </h2>
             </div>
 
-            <p className="text-green-400 text-sm text-center">
-              {level.timerMessage.replace("{time}", timeLeft.toString())}
-            </p>
-
-            <div className="flex items-center gap-3">
-
-            <div className="flex-1">
-              <TimerBar
-                duration={TIMER_DURATION}
-                isPaused={revealed || answered}
-                onTimeUp={() => {
-                    if (!answered) onAnswer("timeout", 0);
-                }}
-              />
-            </div>
-
-            <span
-              className={`text-xl font-bold ${
-                timeLeft <= 10
-                  ? "text-red-500 drop-shadow-[0_0_6px_rgba(255,0,0,0.8)]"
-                  : "text-green-400 drop-shadow-[0_0_6px_rgba(0,255,0,0.8)]"
-              }`}
-            >
-              {timeLeft}s
-            </span>
-          </div>
-
-            <div className="border border-green-500/30 bg-black/60 p-5 rounded">
+            <TimerBar
+              duration={TIMER_DURATION}
+              isPaused={revealed || answered}
+              onTimeUp={() => {
+                if (!answered) onAnswer("timeout", 0);
+              }}
+              timerMessage={level.timerMessage}
+            />
+            <div className="border border-green-500/20 bg-black/60 p-5 rounded-none">
               <p className="text-green-300 text-base md:text-lg leading-relaxed">
                 <span className="text-green-500 mr-2">$</span>
                 {level.question}
@@ -136,7 +96,7 @@ export function GamePlay({
                 const isSelected = choice.id === selected;
 
                 let style =
-                  "border border-green-500/20 bg-black/40 hover:bg-green-500/10";
+                  "border border-green-500/20 bg-black/40 hover:bg-green-500/5";
 
                 if (revealed) {
                   if (isCorrect) {
@@ -153,7 +113,7 @@ export function GamePlay({
                     key={choice.id}
                     onClick={() => handleSelect(choice.id)}
                     disabled={revealed || answered}
-                    className={`w-full text-left p-4 rounded transition-all ${style}`}
+                    className={`w-full text-left p-4 rounded-none transition-all ${style}`}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 * i }}
@@ -169,27 +129,11 @@ export function GamePlay({
               })}
             </div>
 
-            <AnimatePresence>
-              {revealed && selected === level.correctAnswer && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  className="p-4 border border-green-500 bg-green-500/5 rounded"
-                >
-                  <p className="font-bold text-green-400 mb-2">
-                    ✓ ACCESO CONCEDIDO
-                  </p>
-                  <p className="text-green-300/70 text-sm">
-                    {level.explanation}
-                  </p>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
           </motion.div>
         </AnimatePresence>
 
       </div>
     </div>
+    
   );
 }

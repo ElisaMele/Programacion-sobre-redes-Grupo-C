@@ -5,6 +5,7 @@ interface TimerBarProps {
   onTimeUp: () => void;
   isPaused: boolean;
   onTick?: (timeLeft: number) => void;
+  timerMessage: string;
 }
 
 export function TimerBar({
@@ -12,10 +13,10 @@ export function TimerBar({
   onTimeUp,
   isPaused,
   onTick,
+  timerMessage,
 }: TimerBarProps) {
   const [timeLeft, setTimeLeft] = useState(duration);
 
-  // reset cuando cambia nivel o duration
   useEffect(() => {
     setTimeLeft(duration);
   }, [duration]);
@@ -30,7 +31,6 @@ export function TimerBar({
     return () => clearInterval(interval);
   }, [isPaused, duration]);
 
-  // efectos separados (ESTO ES LA CLAVE)
   useEffect(() => {
     if (onTick) onTick(timeLeft);
 
@@ -41,24 +41,39 @@ export function TimerBar({
 
   const percentage = (timeLeft / duration) * 100;
 
+  const message = timerMessage.replace("{time}", String(timeLeft));
+
   return (
-    <div
-      style={{
-        width: "100%",
-        height: "10px",
-        backgroundColor: "#374151",
-        borderRadius: "999px",
-        overflow: "hidden",
-      }}
-    >
-      <div
-        style={{
-          width: `${percentage}%`,
-          height: "100%",
-          backgroundColor: "#22c55e",
-          transition: "width 0.3s linear",
-        }}
-      />
+    <div className="w-full space-y-2">
+
+      <div className="flex justify-between items-center text-sm">
+        <span className="text-green-400 font-mono">
+          {message}
+        </span>
+
+        <span
+          className={`text-xl font-bold ${
+            timeLeft <= 10
+              ? "text-red-500 drop-shadow-[0_0_6px_rgba(255,0,0,0.8)]"
+              : "text-green-400 drop-shadow-[0_0_6px_rgba(0,255,0,0.8)]"
+          }`}
+        >
+          {timeLeft}s
+        </span>
+      </div>
+
+      <div className="w-full h-2 bg-gray-700 overflow-hidden border border-green-500/20 rounded-none">
+        <div
+          className={`h-full ${
+            timeLeft <= 10 ? "bg-red-500" : "bg-green-500"
+          }`}
+          style={{
+            width: `${percentage}%`,
+            transition: "width 0.3s linear",
+          }}
+        />
+      </div>
+
     </div>
   );
 }
