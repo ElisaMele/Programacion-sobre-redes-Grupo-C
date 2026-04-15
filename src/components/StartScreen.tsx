@@ -43,7 +43,7 @@ export function StartScreen({ onStart }: Props) {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.8 }}
         >
-          Sistema corporativo comprometido.
+          Has sido atrapado dentro de una red corporativa.
           <br />
           Resolvé <span className="text-foreground font-semibold">15 desafíos</span> para escapar.
         </motion.p>
@@ -68,10 +68,9 @@ export function StartScreen({ onStart }: Props) {
           </div>
         </motion.div>
 
-        {/* BOTÓN igual al original */}
         <motion.button
           onClick={onStart}
-          className="px-10 py-4 bg-black text-primary border border-primary font-display font-bold text-lg rounded-sm box-glow tracking-widest hover:brightness-125 transition-all"
+          className="px-10 py-4 bg-primary text-black font-display font-bold text-lg rounded-sm box-glow tracking-widest hover:brightness-110 transition-all"
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 1.5 }}

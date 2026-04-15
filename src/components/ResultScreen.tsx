@@ -1,9 +1,6 @@
 import { motion } from "framer-motion";
 import type { Level } from "@/data/levels";
 
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-
 type Props = {
   level: Level;
   wasCorrect: boolean;
@@ -13,6 +10,7 @@ type Props = {
 };
 
 export function ResultScreen({
+  level,
   wasCorrect,
   lives,
   onNext,
@@ -20,69 +18,72 @@ export function ResultScreen({
 }: Props) {
   return (
     <motion.div
-      className="min-h-screen flex items-center justify-center px-4"
+      className="min-h-screen flex flex-col items-center justify-center px-4"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
     >
-      <Card className=" text-center">
-        <CardContent className="p-8 space-y-6">
+      <div className="text-center max-w-md space-y-6">
 
+        <motion.div
+          className={`font-display text-6xl ${
+            wasCorrect ? "text-green-400" : "text-red-500"
+          }`}
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ type: "spring", damping: 10 }}
+        >
+          {wasCorrect ? "✓" : "✗"}
+        </motion.div>
+
+        <h2
+          className={`font-display text-2xl font-bold ${
+            wasCorrect ? "text-green-400" : "text-red-500"
+          }`}
+        >
+          {wasCorrect
+            ? "NODO DESBLOQUEADO"
+            : "CONEXIÓN FALLIDA"}
+        </h2>
+
+        <p className="text-green-300/70 text-sm">
+          {wasCorrect
+            ? "Has avanzado al siguiente nodo de la red."
+            : `Has perdido una vida. Te quedan ${lives} vida${lives !== 1 ? "s" : ""}.`}
+        </p>
+
+        {/* 👇 ACÁ VA LA EXPLICACIÓN (ANTES DEL BOTÓN) */}
+        {!wasCorrect && (
           <motion.div
-            className={`text-6xl font-bold ${
-              wasCorrect ? "text-green-400" : "text-red-500"
-            }`}
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ type: "spring", damping: 10 }}
+            className="border border-red-500/40 bg-black/60 p-4 rounded"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
           >
-            {wasCorrect ? "✓" : "✗"}
+            <p className="text-green-400 font-bold text-sm mb-2">
+              ✓ RESPUESTA CORRECTA
+            </p>
+            <p className="text-green-300 text-sm leading-relaxed">
+              {level.explanation}
+            </p>
           </motion.div>
+        )}
 
-          <h2
-            className={`text-2xl font-bold tracking-wider ${
-              wasCorrect ? "text-green-400" : "text-red-500"
+        {lives > 0 && (
+          <motion.button
+            onClick={onNext}
+            className={`px-8 py-3 font-display font-bold rounded-sm tracking-wider transition-all ${
+              wasCorrect
+                ? "bg-green-500 text-black hover:bg-green-400"
+                : "bg-red-500 text-black hover:bg-red-400"
             }`}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
-            {wasCorrect
-              ? "NODO DESBLOQUEADO"
-              : "ACCESO DENEGADO"}
-          </h2>
-
-          <p className="text-green-300/70 text-sm">
-            {wasCorrect
-              ? "Has avanzado al siguiente nodo de la red."
-              : `Te quedan ${lives} vida${lives !== 1 ? "s" : ""}.`}
-          </p>
-
-          {wasCorrect && (
-            <motion.div
-              className="border border-green-500/30 bg-green-500/5 p-4 rounded"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-            >
-              <p className="text-green-400 font-bold text-sm">
-                ✓ ACCESO CONCEDIDO
-              </p>
-            </motion.div>
-          )}
-
-          {lives > 0 && (
-            <Button
-              onClick={onNext}
-              className={`w-full font-bold tracking-wider ${
-                wasCorrect
-                  ? "bg-green-500 hover:bg-green-400 text-black"
-                  : "bg-red-500 hover:bg-red-400 text-black"
-              }`}
-            >
-              {isLastLevel && wasCorrect
-                ? "> RESULTADO FINAL <"
-                : "> CONTINUAR <"}
-            </Button>
-          )}
-
-        </CardContent>
-      </Card>
+            {isLastLevel && wasCorrect
+              ? "> RESULTADO FINAL <"
+              : "> CONTINUAR <"}
+          </motion.button>
+        )}
+      </div>
     </motion.div>
   );
 }
