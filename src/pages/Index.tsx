@@ -1,85 +1,76 @@
-import { levels } from "../data/levels";
+import { levels } from "@/data/levels";
+import { useGameStore } from "@/hooks/useGameStore";
 
-import { StartScreen } from "../components/StartScreen";
-import { GamePlay } from "../components/GamePlay";
-import { ResultScreen } from "../components/ResultScreen";
-import { GameOverScreen } from "../components/GameOverScreen";
-import { VictoryScreen } from "../components/VictoryScreen";
-import { WrongAnswerScreen } from "../components/WrongAnswerScreen";
-
-import { useGameStore } from "../hooks/useGameStore";
+import { StartScreen } from "@/components/StartScreen";
+import { GamePlay } from "@/components/GamePlay";
+import { ResultScreen } from "@/components/ResultScreen";
+import { GameOverScreen } from "@/components/GameOverScreen";
+import { VictoryScreen } from "@/components/VictoryScreen";
+import { MatrixRain } from "@/components/MatrixRain";
 
 const Index = () => {
   const game = useGameStore();
 
-  const level = levels[game.currentLevel];
+  const currentLevel = levels[game.currentLevel];
 
-  // START
-  if (game.state === "start") {
-    return (
-      <StartScreen
-        onStart={game.startGame}
-        totalLevels={levels.length}
-      />
-    );
-  }
+  const lastAnswer =
+    game.answers.length > 0
+      ? game.answers[game.answers.length - 1]
+      : null;
 
-  // WRONG
-  if (game.state === "wrong") {
-    return (
-      <WrongAnswerScreen
-        explanation={level.explanation}
-        onContinue={game.nextLevel}
-      />
-    );
-  }
-
-  // RESULT
-  if (game.state === "result") {
-    return (
-      <ResultScreen
-        level={level}
-        wasCorrect={game.lastCorrect ?? false}
-        onNext={game.nextLevel}
-        isLastLevel={game.currentLevel >= levels.length - 1}
-        lives={game.lives}
-        onGameOver={game.resetGame}
-      />
-    );
-  }
-
-  // GAME OVER
-  if (game.state === "gameover") {
-    return (
-      <GameOverScreen
-        score={game.score}
-        onRestart={game.resetGame}
-      />
-    );
-  }
-
-  // VICTORY
-  if (game.state === "victory") {
-    return (
-      <VictoryScreen
-        score={game.score}
-        onRestart={game.resetGame}
-      />
-    );
-  }
-
-  // GAMEPLAY
   return (
-    <GamePlay
-      level={level}
-      currentLevel={game.currentLevel}
-      totalLevels={levels.length}
-      lives={game.lives}
-      score={game.score}
-      selectedAnswer={null}
-      answered={false}
-      onAnswer={game.answerQuestion}
-    />
+    <div className="min-h-screen relative overflow-hidden bg-black text-green-400">
+
+      <MatrixRain />
+
+      <div className="absolute inset-0 bg-black/80 z-0" />
+
+      <div className="relative z-10 min-h-screen">
+
+        {game.state === "start" && (
+          <StartScreen onStart={game.startGame} />
+        )}
+
+        {game.state === "playing" && currentLevel && (
+          <GamePlay
+            level={currentLevel}
+            currentLevel={game.currentLevel}
+            totalLevels={levels.length}
+            score={game.score}
+            lives={game.lives}
+            answered={false}
+            onAnswer={game.answerQuestion}
+          />
+        )}
+
+        {game.state === "result" && currentLevel && lastAnswer && (
+          <ResultScreen
+            level={currentLevel}
+            wasCorrect={lastAnswer.correct}
+            lives={game.lives}
+            onNext={game.nextLevel}
+            isLastLevel={game.currentLevel >= levels.length - 1}
+          />
+        )}
+
+        {game.state === "gameover" && (
+          <GameOverScreen
+            score={game.score}
+            levelsCompleted={game.answers.filter(a => a.correct).length}
+            onRestart={game.resetGame}
+          />
+        )}
+
+        {game.state === "victory" && (
+          <VictoryScreen
+            score={game.score}
+            answers={game.answers}
+            onRestart={game.resetGame}
+          />
+        )}
+
+      </div>
+    </div>
   );
 };
 

@@ -1,83 +1,113 @@
-import type { Level } from "../data/levels";
-import { useRef } from "react";
-import { TimerBar } from "../components/TimerBar";
+import { useEffect, useRef, useState } from "react";
+import type { Level } from "@/data/levels";
+
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { HUD } from "@/components/HUD";
+import { TimerBar } from "@/components/TimerBar";
 
 type Props = {
   level: Level;
   currentLevel: number;
   totalLevels: number;
-  lives: number;
   score: number;
+  lives: number;
   answered: boolean;
   onAnswer: (id: string, timeLeft: number) => void;
 };
 
-export const GamePlay = ({
+export function GamePlay({
   level,
   currentLevel,
   totalLevels,
-  lives,
   score,
+  lives,
   answered,
   onAnswer,
-}: Props) => {
-
+}: Props) {
   const TIMER_DURATION = 60;
   const startTimeRef = useRef(Date.now());
 
+  const [selected, setSelected] = useState<string | null>(null);
+  const [revealed, setRevealed] = useState(false);
+
+  useEffect(() => {
+    setSelected(null);
+    setRevealed(false);
+    startTimeRef.current = Date.now();
+  }, [level.id]);
+
   return (
-    <div className="min-h-screen bg-gray-900 text-white flex justify-center items-center">
-      <div className="bg-gray-800 p-6 rounded-xl w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center px-4">
 
-        {/* HUD */}
-        <div className="mb-4 text-center">
-          <p>Nivel {currentLevel + 1} / {totalLevels}</p>
-          <p>⭐ {score}</p>
-          <p>❤️ {lives}</p>
+      <div className="w-full max-w-2xl space-y-4">
 
-          <TimerBar
-            duration={TIMER_DURATION}
-            isPaused={answered}
-            onTimeUp={() => {
-  if (!answered) onAnswer("timeout", 0);
-}}
-          />
-        </div>
+        <HUD
+          level={currentLevel + 1}
+          totalLevels={totalLevels}
+          score={score}
+          lives={lives}
+        />
 
-        {/* Pregunta */}
-        <h1 className="text-xl font-bold mb-2">{level.title}</h1>
-        <p className="mb-2">{level.question}</p>
+        <Card className="bg-black/80 border-green-500/20">
+          <CardContent className="space-y-4 p-6">
 
-        {/* Respuestas */}
-        <div className="space-y-2">
-          {level.choices.map((choice) => (
-            <button
-              key={choice.id}
-              disabled={answered}
-              onClick={() => {
-                if (answered) return;
-
-                const elapsed = Math.floor(
-                    (Date.now() - startTimeRef.current) / 1000
-                      );
-
-                      const timeLeft = Math.max(0, TIMER_DURATION - elapsed);
-
-                    onAnswer(choice.id, timeLeft);
-
+            <TimerBar
+              duration={TIMER_DURATION}
+              isPaused={revealed || answered}
+              onTimeUp={() => {
+                if (!answered) onAnswer("timeout", 0);
               }}
-              className={`w-full p-2 rounded transition ${
-                answered
-                  ? "bg-gray-600 cursor-not-allowed"
-                  : "bg-blue-600 hover:bg-blue-700"
-              }`}
-            >
-              {choice.text}
-            </button>
-          ))}
-        </div>
+            />
+
+            <h1 className="text-green-400 font-bold text-lg">
+              {level.title}
+            </h1>
+
+            <p className="text-green-300/70">
+              {level.question}
+            </p>
+
+            <div className="space-y-2">
+              {level.choices.map((choice) => (
+                <Button
+                  key={choice.id}
+                  disabled={answered || revealed}
+                  onClick={() => {
+                    if (answered || revealed) return;
+
+                    const elapsed = Math.floor(
+                      (Date.now() - startTimeRef.current) / 1000
+                    );
+
+                    const timeLeft = Math.max(0, TIMER_DURATION - elapsed);
+
+                    setSelected(choice.id);
+                    setRevealed(true);
+
+                    setTimeout(() => {
+                      onAnswer(choice.id, timeLeft);
+                    }, 600);
+                  }}
+                  className={`w-full justify-start ${
+                    revealed
+                      ? choice.id === level.correctAnswer
+                        ? "bg-green-600"
+                        : choice.id === selected
+                          ? "bg-red-600"
+                          : "bg-gray-800 opacity-50"
+                      : "bg-green-500/10 hover:bg-green-500/20"
+                  }`}
+                >
+                  {choice.text}
+                </Button>
+              ))}
+            </div>
+
+          </CardContent>
+        </Card>
 
       </div>
     </div>
   );
-};
+}

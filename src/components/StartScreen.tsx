@@ -1,29 +1,33 @@
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+
 type Props = {
   onStart: () => void;
-  totalLevels: number;
 };
 
-export const StartScreen = ({ onStart, totalLevels }: Props) => {
+export function StartScreen({ onStart }: Props) {
   return (
-    <div>
-      <h1>🧠 Network Escape Room</h1>
+    <div className="min-h-screen flex items-center justify-center">
+      <Card className="bg-black/80 border-green-500/30 w-full max-w-md text-center">
+        <CardContent className="p-8 space-y-6">
 
-      <p>
-        Has sido atrapado dentro de una red corporativa.
-        Deberás responder correctamente para escapar.
-      </p>
+          <h1 className="text-2xl font-bold tracking-widest text-green-400">
+            NETWORK SCAPE ROOM
+          </h1>
 
-      <ul>
-        <li>60 segundos por pregunta</li>
-        <li>3 vidas — si las perdés, game over</li>
-        <li>Bonus por responder rápido</li>
-      </ul>
+          <p className="text-green-300/60 text-sm">
+            SYSTEM INITIALIZING...
+          </p>
 
-      <p>Niveles: {totalLevels}</p>
+          <Button
+            onClick={onStart}
+            className="w-full bg-green-500 hover:bg-green-400 text-black font-bold"
+          >
+            START
+          </Button>
 
-      <button onClick={onStart}>
-        ▶ Iniciar escape
-      </button>
+        </CardContent>
+      </Card>
     </div>
   );
-};
+}
