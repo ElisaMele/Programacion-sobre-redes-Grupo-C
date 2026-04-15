@@ -97,16 +97,31 @@ export function GamePlay({
             </div>
 
             <p className="text-green-400 text-sm text-center">
-              Tiempo restante: {timeLeft}s
+              {level.timerMessage.replace("{time}", timeLeft.toString())}
             </p>
 
-            <TimerBar
-              duration={TIMER_DURATION}
-              isPaused={revealed || answered}
-              onTimeUp={() => {
-                if (!answered) onAnswer("timeout", 0);
-              }}
-            />
+            <div className="flex items-center gap-3">
+
+            <div className="flex-1">
+              <TimerBar
+                duration={TIMER_DURATION}
+                isPaused={revealed || answered}
+                onTimeUp={() => {
+                    if (!answered) onAnswer("timeout", 0);
+                }}
+              />
+            </div>
+
+            <span
+              className={`text-xl font-bold ${
+                timeLeft <= 10
+                  ? "text-red-500 drop-shadow-[0_0_6px_rgba(255,0,0,0.8)]"
+                  : "text-green-400 drop-shadow-[0_0_6px_rgba(0,255,0,0.8)]"
+              }`}
+            >
+              {timeLeft}s
+            </span>
+          </div>
 
             <div className="border border-green-500/30 bg-black/60 p-5 rounded">
               <p className="text-green-300 text-base md:text-lg leading-relaxed">
