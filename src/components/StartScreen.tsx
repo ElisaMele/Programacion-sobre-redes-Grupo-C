@@ -1,92 +1,95 @@
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { motion } from "framer-motion";
+import { MatrixRain } from "./MatrixRain";
+import { Terminal, Zap } from "lucide-react";
 
-type Props = {
+interface Props {
   onStart: () => void;
-};
+}
 
 export function StartScreen({ onStart }: Props) {
-  const [starting, setStarting] = useState(false);
-
-  const handleStart = () => {
-    setStarting(true);
-    setTimeout(onStart, 600);
-  };
-
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background relative overflow-hidden">
+    <div className="relative min-h-screen flex flex-col items-center justify-center px-4 overflow-hidden">
+      
+      <MatrixRain />
 
-      {/* fondo real del sistema */}
-      <div className="absolute inset-0 scanline opacity-30 pointer-events-none" />
+      <div className="scanline" />
 
-      {/* glow ambiental (MUY suave) */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,hsl(var(--terminal)/0.08),transparent_60%)]" />
+      <div className="absolute inset-0 bg-black/40" />
 
-      <AnimatePresence>
-        {!starting && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.98, y: 10 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.96, y: -10 }}
-            transition={{ duration: 0.5 }}
-            className="w-full max-w-md px-4"
-          >
-            <Card className="bg-card/80 border border-border box-glow backdrop-blur-sm">
-              <CardContent className="p-8 space-y-6 text-center">
+      <motion.div
+        className="relative z-10 text-center max-w-2xl"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1 }}
+      >
+        <motion.div
+          initial={{ y: -30, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.3, duration: 0.8 }}
+          className="mb-8"
+        >
+          <Terminal className="w-16 h-16 text-primary mx-auto mb-4" />
+          <h1 className="font-display text-4xl md:text-6xl font-black text-foreground text-glow tracking-wider">
+            NETWORK
+          </h1>
+          <h1 className="font-display text-4xl md:text-6xl font-black text-primary text-glow tracking-wider">
+            ESCAPE ROOM
+          </h1>
+        </motion.div>
 
-                {/* estado sistema */}
-                <p className="text-xs text-red-500 tracking-widest animate-flicker">
-                  ● SYSTEM LOCKED
-                </p>
+        <motion.p
+          className="text-muted-foreground text-lg mb-4 leading-relaxed"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.8 }}
+        >
+          Sistema corporativo comprometido.
+          <br />
+          Resolvé <span className="text-foreground font-semibold">15 desafíos</span> para escapar.
+        </motion.p>
 
-                {/* título (LO MÁS IMPORTANTE) */}
-                <div className="space-y-2">
-                  <h1 className="font-display text-4xl font-bold text-foreground text-glow">
-                    NETWORK
-                  </h1>
-                  <h1 className="font-display text-4xl font-bold text-primary text-glow">
-                    SCAPE ROOM
-                  </h1>
-                </div>
+        <motion.div
+          className="flex flex-col items-center gap-3 text-sm text-terminal-dim mb-8"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.2 }}
+        >
+          <div className="flex items-center gap-2">
+            <Zap className="w-4 h-4 text-warning" />
+            <span>60 segundos por pregunta</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-danger">♥♥♥</span>
+            <span>3 vidas — si las perdés, game over</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-primary">+</span>
+            <span>Bonus por responder rápido</span>
+          </div>
+        </motion.div>
 
-                {/* narrativa */}
-                <div className="text-sm text-muted-foreground space-y-2 leading-relaxed">
-                  <p>
-                    <span className="text-primary">&gt;</span> Sistema corporativo comprometido
-                  </p>
-                  <p>
-                    <span className="text-primary">&gt;</span> Resolvé{" "}
-                    <span className="text-foreground font-bold">15 desafíos</span> para escapar
-                  </p>
-                </div>
+        {/* BOTÓN igual al original */}
+        <motion.button
+          onClick={onStart}
+          className="px-10 py-4 bg-black text-primary border border-primary font-display font-bold text-lg rounded-sm box-glow tracking-widest hover:brightness-125 transition-all"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 1.5 }}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          {">"} INICIAR ESCAPE {"<"}
+        </motion.button>
 
-                {/* reglas */}
-                <div className="terminal-border bg-muted/20 p-3 text-xs text-muted-foreground space-y-1">
-                  <p>⏱ 60 segundos por pregunta</p>
-                  <p>♥ 3 vidas</p>
-                  <p>⚡ bonus por velocidad</p>
-                </div>
-
-                {/* CTA (único foco visual fuerte) */}
-                <Button
-                  onClick={handleStart}
-                  className="w-full bg-primary text-primary-foreground font-bold tracking-widest box-glow hover:brightness-110 active:scale-[0.98] transition-all"
-                >
-                  &gt; INICIAR ESCAPE &lt;
-                </Button>
-
-                {/* footer mínimo */}
-                <p className="text-[10px] text-muted-foreground">
-                  PROGRAMA DE REDES — SIMULACIÓN
-                </p>
-
-              </CardContent>
-            </Card>
-          </motion.div>
-        )}
-      </AnimatePresence>
+        <motion.p
+          className="mt-6 text-xs text-terminal-dim"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 2 }}
+        >
+          Programación sobre Redes — Trabajo Práctico
+        </motion.p>
+      </motion.div>
     </div>
   );
 }

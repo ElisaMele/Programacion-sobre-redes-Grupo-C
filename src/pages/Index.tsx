@@ -21,15 +21,14 @@ const Index = () => {
   return (
     <div className="w-full h-screen bg-black text-green-400 overflow-hidden relative">
 
-      {/* MATRIX BACKGROUND */}
       <div className="absolute inset-0 z-0">
         <MatrixRain />
       </div>
 
-      {/* OVERLAY */}
-      <div className="absolute inset-0 bg-black/80 z-10" />
+      <div className="absolute inset-0 bg-black/85 z-10" />
 
-      {/* CONTENT WRAPPER (CENTRADO REAL) */}
+      <div className="absolute inset-0 z-20 pointer-events-none scanline opacity-[0.12]" />
+
       <div className="relative z-20 w-full h-full flex items-center justify-center">
 
         {game.state === "start" && (
