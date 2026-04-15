@@ -31,16 +31,28 @@ export function GamePlay({
   const [selected, setSelected] = useState<string | null>(null);
   const [revealed, setRevealed] = useState(false);
 
+  const [flash, setFlash] = useState<"correct" | "wrong" | null>(null);
+
   useEffect(() => {
     setSelected(null);
     setRevealed(false);
+    setFlash(null);
     startTimeRef.current = Date.now();
   }, [level.id]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4">
+    <div className="min-h-screen flex items-center justify-center px-4 relative">
 
-      <div className="w-full max-w-2xl space-y-4">
+      {flash && (
+        <div
+          className={`
+            fixed inset-0 z-50 pointer-events-none transition-opacity duration-200
+            ${flash === "correct" ? "bg-green-500/10" : "bg-red-500/10"}
+          `}
+        />
+      )}
+
+      <div className="w-full max-w-2xl space-y-4 z-10">
 
         <HUD
           level={currentLevel + 1}
@@ -69,39 +81,49 @@ export function GamePlay({
             </p>
 
             <div className="space-y-2">
-              {level.choices.map((choice) => (
-                <Button
-                  key={choice.id}
-                  disabled={answered || revealed}
-                  onClick={() => {
-                    if (answered || revealed) return;
+              {level.choices.map((choice) => {
+                const isCorrect = choice.id === level.correctAnswer;
+                const isSelected = choice.id === selected;
 
-                    const elapsed = Math.floor(
-                      (Date.now() - startTimeRef.current) / 1000
-                    );
+                return (
+                  <Button
+                    key={choice.id}
+                    disabled={answered || revealed}
+                    onClick={() => {
+                      if (answered || revealed) return;
 
-                    const timeLeft = Math.max(0, TIMER_DURATION - elapsed);
+                      const elapsed = Math.floor(
+                        (Date.now() - startTimeRef.current) / 1000
+                      );
 
-                    setSelected(choice.id);
-                    setRevealed(true);
+                      const timeLeft = Math.max(0, TIMER_DURATION - elapsed);
 
-                    setTimeout(() => {
-                      onAnswer(choice.id, timeLeft);
-                    }, 600);
-                  }}
-                  className={`w-full justify-start ${
-                    revealed
-                      ? choice.id === level.correctAnswer
-                        ? "bg-green-600"
-                        : choice.id === selected
-                          ? "bg-red-600"
-                          : "bg-gray-800 opacity-50"
-                      : "bg-green-500/10 hover:bg-green-500/20"
-                  }`}
-                >
-                  {choice.text}
-                </Button>
-              ))}
+                      const correct = choice.id === level.correctAnswer;
+
+                      setSelected(choice.id);
+                      setRevealed(true);
+
+                      setFlash(correct ? "correct" : "wrong");
+
+                      setTimeout(() => {
+                        setFlash(null);
+                        onAnswer(choice.id, timeLeft);
+                      }, 600);
+                    }}
+                    className={`w-full justify-start transition-all duration-200 active:scale-[0.98] ${
+                      revealed
+                        ? isCorrect
+                          ? "bg-green-600 text-black"
+                          : isSelected
+                            ? "bg-red-600"
+                            : "bg-gray-800 opacity-50"
+                        : "bg-green-500/10 hover:bg-green-500/20"
+                    }`}
+                  >
+                    {choice.text}
+                  </Button>
+                );
+              })}
             </div>
 
           </CardContent>

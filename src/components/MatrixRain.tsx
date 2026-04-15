@@ -6,10 +6,7 @@ export function MatrixRain() {
   const columns = Array.from({ length: 18 });
 
   return (
-    <div className="fixed inset-0 pointer-events-none -z-10 opacity-10 blur-[0.5px] overflow-hidden">
-
-      {/* fade top/bottom */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black z-10" />
+    <div className="fixed inset-0 pointer-events-none z-0 opacity-10 overflow-hidden">
 
       {columns.map((_, col) => (
         <motion.div
