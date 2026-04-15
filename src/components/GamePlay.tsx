@@ -29,29 +29,44 @@ export function GamePlay({
 
   const [selected, setSelected] = useState<string | null>(null);
   const [revealed, setRevealed] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(TIMER_DURATION);
+
+  useEffect(() => {
+  if (revealed || answered) return;
+
+  const interval = setInterval(() => {
+    setTimeLeft((prev) => {
+      if (prev <= 1) {
+        clearInterval(interval);
+        onAnswer("timeout", 0);
+        return 0;
+      }
+      return prev - 1;
+    });
+  }, 1000);
+
+  return () => clearInterval(interval);
+}, [revealed, answered, onAnswer]);
 
   useEffect(() => {
     setSelected(null);
     setRevealed(false);
     startTimeRef.current = Date.now();
+    setTimeLeft(TIMER_DURATION);
   }, [level.id]);
 
   const handleSelect = (choiceId: string) => {
-    if (revealed || answered) return;
+  if (revealed || answered) return;
 
-    const elapsed = Math.floor(
-      (Date.now() - startTimeRef.current) / 1000
-    );
+  const currentTimeLeft = timeLeft;
 
-    const timeLeft = Math.max(0, TIMER_DURATION - elapsed);
+  setSelected(choiceId);
+  setRevealed(true);
 
-    setSelected(choiceId);
-    setRevealed(true);
-
-    setTimeout(() => {
-      onAnswer(choiceId, timeLeft);
-    }, 600);
-  };
+  setTimeout(() => {
+    onAnswer(choiceId, currentTimeLeft);
+  }, 600);
+};
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -80,6 +95,10 @@ export function GamePlay({
                 [{level.title}]
               </h2>
             </div>
+
+            <p className="text-green-400 text-sm text-center">
+              Tiempo restante: {timeLeft}s
+            </p>
 
             <TimerBar
               duration={TIMER_DURATION}
