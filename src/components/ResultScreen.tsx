@@ -13,7 +13,6 @@ type Props = {
 };
 
 export function ResultScreen({
-  level,
   wasCorrect,
   lives,
   onNext,
