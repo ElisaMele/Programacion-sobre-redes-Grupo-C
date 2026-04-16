@@ -89,13 +89,15 @@ export const GameOverScreen = ({
 
           <div className="flex justify-between text-sm">
             <span className="text-gray-400">Puntaje final:</span>
-            <span className="text-green-400 font-bold">{score}</span>
+            <span className="text-green-400 font-bold">
+              {score}
+            </span>
           </div>
         </div>
 
         <motion.button
           onClick={onRestart}
-          className="px-8 py-3 bg-red-600 text-black font-bold tracking-wider rounded-sm hover:brightness-110 transition"
+          className="px-8 py-3 bg-red-600 text-black font-bold tracking-wider rounded-sm hover:brightness-110"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
