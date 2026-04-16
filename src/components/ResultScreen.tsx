@@ -51,7 +51,6 @@ export function ResultScreen({
             : `Has perdido una vida. Te quedan ${lives} vida${lives !== 1 ? "s" : ""}.`}
         </p>
 
-        {/* 👇 ACÁ VA LA EXPLICACIÓN (ANTES DEL BOTÓN) */}
         {!wasCorrect && (
           <motion.div
             className="border border-red-500/40 bg-black/60 p-4 rounded-none"

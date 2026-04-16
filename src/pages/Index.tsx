@@ -61,6 +61,7 @@ const Index = () => {
         {game.state === "gameover" && (
           <GameOverScreen
             score={game.score}
+              levelsCompleted={game.currentLevel}
             onRestart={game.resetGame}
           />
         )}
