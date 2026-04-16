@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Level } from "@/data/levels";
-
+import { playCorrect, playWrong, playTimeUp } from "@/lib/sounds";
 import { TimerBar } from "@/components/TimerBar";
 import { HUD } from "@/components/HUD";
 
@@ -40,9 +40,18 @@ export function GamePlay({
     setSelected(choiceId);
     setRevealed(true);
 
+    const correct = choiceId === level.correctAnswer;
+
+    if (correct) {
+  playCorrect();
+    } else {
+      playWrong();
+    }
+
     setTimeout(() => {
       onAnswer(choiceId, 0);
     }, 600);
+
   };
 
   return (
@@ -79,7 +88,10 @@ export function GamePlay({
               duration={TIMER_DURATION}
               isPaused={revealed || answered}
               onTimeUp={() => {
-                if (!answered) onAnswer("timeout", 0);
+                if (!answered) {
+                  playTimeUp();
+                  onAnswer("timeout", 0);
+                }
               }}
               timerMessage={level.timerMessage}
             />
