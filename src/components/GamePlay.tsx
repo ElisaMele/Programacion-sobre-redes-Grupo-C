@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Level } from "@/data/levels";
 import { playCorrect, playWrong, playTimeUp } from "@/lib/sounds";
@@ -28,10 +28,12 @@ export function GamePlay({
 
   const [selected, setSelected] = useState<string | null>(null);
   const [revealed, setRevealed] = useState(false);
+  const startTimeRef = useRef(Date.now());
 
   useEffect(() => {
     setSelected(null);
     setRevealed(false);
+    startTimeRef.current = Date.now();
   }, [level.id]);
 
   const handleSelect = (choiceId: string) => {
@@ -48,9 +50,12 @@ export function GamePlay({
       playWrong();
     }
 
-    setTimeout(() => {
-      onAnswer(choiceId, 0);
-    }, 600);
+      const elapsed = Math.floor((Date.now() - startTimeRef.current) / 1000);
+      const timeLeft = Math.max(0, TIMER_DURATION - elapsed);
+
+      setTimeout(() => {
+        onAnswer(choiceId, timeLeft);
+      }, 600);
 
   };
 

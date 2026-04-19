@@ -61,7 +61,8 @@ export function useGameStore(): GameStore {
       ]);
 
       if (correct) {
-        setScore((s) => s + 100 + timeLeft * 5);
+        const bonus = Math.floor(timeLeft * 10);
+        setScore((s) => s + 100 + bonus);
         setState("result");
       } else {
         setLives((l) => {
