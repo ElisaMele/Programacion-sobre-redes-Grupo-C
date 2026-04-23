@@ -109,7 +109,7 @@ export function useGameStore(): GameStore {
       setState("playing");
       return next;
     });
-  }, []);
+  }, [gameLevels]);
 
   const resetGame = useCallback(() => {
     setState("start");

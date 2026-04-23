@@ -86,7 +86,7 @@ export function StartScreen({ onStart }: Props) {
           animate={{ opacity: 1 }}
           transition={{ delay: 2 }}
         >
-          Programación sobre Redes — Trabajo Práctico
+          Programación sobre Redes — Trabajo Práctico - Grupo C
         </motion.p>
       </motion.div>
     </div>
