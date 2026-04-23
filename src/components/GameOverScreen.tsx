@@ -3,11 +3,11 @@ import { motion } from "framer-motion";
 import { Skull } from "lucide-react";
 import { MatrixRain } from "./MatrixRain";
 import { playGameOver } from "@/lib/sounds";
-import { levels } from "@/data/levels";
 
 type Props = {
   score: number;
   levelsCompleted: number;
+  totalLevels: number;
   onRestart: () => void;
 };
 
@@ -47,13 +47,14 @@ function getMessage(completed: number, total: number) {
 export const GameOverScreen = ({
   score,
   levelsCompleted,
+  totalLevels,
   onRestart,
 }: Props) => {
   useEffect(() => {
     playGameOver();
   }, []);
 
-  const msg = getMessage(levelsCompleted, levels.length);
+  const msg = getMessage(levelsCompleted, totalLevels);
 
   return (
     <div className="relative min-h-screen flex items-center justify-center px-4 overflow-hidden">
@@ -83,7 +84,7 @@ export const GameOverScreen = ({
           <div className="flex justify-between text-sm">
             <span className="text-gray-400">Niveles completados:</span>
             <span className="text-green-400 font-bold">
-              {levelsCompleted}/{levels.length}
+              {levelsCompleted}/{totalLevels}
             </span>
           </div>
 

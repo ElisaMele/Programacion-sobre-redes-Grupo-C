@@ -1,4 +1,3 @@
-import { levels } from "@/data/levels";
 import { useGameStore } from "@/hooks/useGameStore";
 
 import { StartScreen } from "@/components/StartScreen";
@@ -12,7 +11,7 @@ import { WrongAnswerScreen } from "@/components/WrongAnswerScreen";
 const Index = () => {
   const game = useGameStore();
 
-  const currentLevel = levels[game.currentLevel];
+  const currentLevel = game.gameLevels?.[game.currentLevel];
 
   const lastAnswer =
     game.answers.length > 0
@@ -39,8 +38,8 @@ const Index = () => {
         {game.state === "playing" && currentLevel && (
           <GamePlay
             level={currentLevel}
+            totalLevels={game.gameLevels.length}
             currentLevel={game.currentLevel}
-            totalLevels={levels.length}
             score={game.score}
             lives={game.lives}
             answered={false}
@@ -54,14 +53,15 @@ const Index = () => {
             wasCorrect={lastAnswer?.correct ?? false}
             lives={game.lives}
             onNext={game.nextLevel}
-            isLastLevel={game.currentLevel >= levels.length - 1}
+            isLastLevel={game.currentLevel >= game.gameLevels.length - 1}
           />
         )}
 
         {game.state === "gameover" && (
           <GameOverScreen
             score={game.score}
-              levelsCompleted={game.currentLevel}
+            levelsCompleted={game.currentLevel}
+            totalLevels={game.gameLevels.length}
             onRestart={game.resetGame}
           />
         )}

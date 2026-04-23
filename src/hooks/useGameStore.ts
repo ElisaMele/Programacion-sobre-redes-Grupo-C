@@ -1,5 +1,10 @@
+import type { Level } from "@/data/levels";
 import { useState, useCallback } from "react";
 import { levels } from "@/data/levels";
+
+function shuffleArray<T>(array: T[]): T[] {
+  return [...array].sort(() => Math.random() - 0.5);
+}
 
 export type GameState =
   | "start"
@@ -20,6 +25,7 @@ interface GameStore {
   currentLevel: number;
   score: number;
   lives: number;
+  gameLevels: Level[];
   answers: Answer[];
   startGame: () => void;
   answerQuestion: (id: string, timeLeft: number) => void;
@@ -34,18 +40,24 @@ export function useGameStore(): GameStore {
   const [score, setScore] = useState(0);
   const [lives, setLives] = useState(3);
   const [answers, setAnswers] = useState<Answer[]>([]);
+  const [gameLevels, setGameLevels] = useState(levels);
 
   const startGame = useCallback(() => {
-    setState("playing");
-    setCurrentLevel(0);
-    setScore(0);
-    setLives(3);
-    setAnswers([]);
-  }, []);
+  const shuffled = shuffleArray(levels);
+  const selected = shuffled.slice(0, 10);
+
+  setGameLevels(selected);
+
+  setState("playing");
+  setCurrentLevel(0);
+  setScore(0);
+  setLives(3);
+  setAnswers([]);
+}, []);
 
   const answerQuestion = useCallback(
     (id: string, timeLeft: number) => {
-      const current = levels[currentLevel];
+      const current = gameLevels[currentLevel];
       if (!current) return;
 
       const correct =
@@ -89,7 +101,7 @@ export function useGameStore(): GameStore {
     setCurrentLevel((prev) => {
       const next = prev + 1;
 
-      if (next >= levels.length) {
+      if (next >= gameLevels.length) {
         setState("victory");
         return prev;
       }
@@ -113,6 +125,7 @@ export function useGameStore(): GameStore {
     score,
     lives,
     answers,
+    gameLevels,
     startGame,
     answerQuestion,
     nextLevel,

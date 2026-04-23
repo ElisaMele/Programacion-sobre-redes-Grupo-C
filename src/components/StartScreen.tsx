@@ -45,7 +45,7 @@ export function StartScreen({ onStart }: Props) {
         >
           Has sido atrapado dentro de una red corporativa.
           <br />
-          Resolvé <span className="text-foreground font-semibold">15 desafíos</span> para escapar.
+          Resolvé <span className="text-foreground font-semibold">10 desafíos</span> para escapar.
         </motion.p>
 
         <motion.div

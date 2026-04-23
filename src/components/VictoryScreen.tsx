@@ -19,17 +19,20 @@ export const VictoryScreen = ({ score, answers, onRestart }: Props) => {
   const correctCount = answers.filter((a) => a.correct).length;
 
   const getRank = () => {
-    if (correctCount >= 15)
-      return { title: "SYSADMIN LEGENDARIO", icon: "👑", color: "text-warning" };
+  const total = answers.length;
+  const pct = correctCount / total;
 
-    if (correctCount >= 12)
-      return { title: "NETWORK ENGINEER", icon: "🌟", color: "text-primary" };
+  if (pct >= 0.9)
+    return { title: "SYSADMIN LEGENDARIO", icon: "👑", color: "text-yellow-400" };
 
-    if (correctCount >= 9)
-      return { title: "JUNIOR ADMIN", icon: "⚡", color: "text-cyber-blue" };
+  if (pct >= 0.7)
+    return { title: "NETWORK ENGINEER", icon: "🌟", color: "text-blue-400" };
 
-    return { title: "TRAINEE", icon: "🔧", color: "text-muted-foreground" };
-  };
+  if (pct >= 0.5)
+    return { title: "JUNIOR ADMIN", icon: "⚡", color: "text-cyan-400" };
+
+  return { title: "TRAINEE", icon: "🔧", color: "text-gray-400" };
+};
 
   const rank = getRank();
 
