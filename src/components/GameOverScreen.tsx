@@ -3,16 +3,18 @@ import { motion } from "framer-motion";
 import { Skull } from "lucide-react";
 import { MatrixRain } from "./MatrixRain";
 import { playGameOver } from "@/lib/sounds";
+import type { Answer } from "@/hooks/useGameStore";
 
 type Props = {
   score: number;
   levelsCompleted: number;
   totalLevels: number;
+  answers: Answer[];
   onRestart: () => void;
 };
 
-function getMessage(completed: number, total: number) {
-  const pct = completed / total;
+function getMessage(correctCount: number, total: number) {
+  const pct = correctCount / total;
 
   if (pct >= 0.8)
     return {
@@ -22,25 +24,25 @@ function getMessage(completed: number, total: number) {
 
   if (pct >= 0.6)
     return {
-      text: "¡Buen intento! Avanzaste bastante en la red.",
-      sub: "Repasá algunos conceptos y volvé a intentar.",
+      text: "¡Buen intento! Tenés una base sólida.",
+      sub: "Con un poco más de práctica, lo resolvés.",
     };
 
   if (pct >= 0.4)
     return {
-      text: "Llegaste hasta la mitad del camino.",
-      sub: "No te rindas, cada intento te acerca más a la salida.",
+      text: "Vas bien, pero te falta afinar conceptos.",
+      sub: "Seguí intentando, estás en camino.",
     };
 
   if (pct >= 0.2)
     return {
-      text: "La red te atrapó rápido esta vez.",
-      sub: "Revisá los temas y volvé con más fuerza.",
+      text: "La red te complicó bastante esta vez.",
+      sub: "Repasá los temas clave y volvé a intentar.",
     };
 
   return {
-    text: "La red te atrapó. No pudiste escapar.",
-    sub: "Estudiá los conceptos y volvé a intentarlo.",
+    text: "La red te atrapó rápido.",
+    sub: "Necesitás reforzar las bases.",
   };
 }
 
@@ -48,13 +50,15 @@ export const GameOverScreen = ({
   score,
   levelsCompleted,
   totalLevels,
+  answers,
   onRestart,
 }: Props) => {
   useEffect(() => {
     playGameOver();
   }, []);
 
-  const msg = getMessage(levelsCompleted, totalLevels);
+  const correctCount = answers.filter((a) => a.correct).length;
+  const msg = getMessage(correctCount, totalLevels);
 
   return (
     <div className="relative min-h-screen flex items-center justify-center px-4 overflow-hidden">
@@ -81,19 +85,28 @@ export const GameOverScreen = ({
         <p className="text-sm text-gray-400">{msg.sub}</p>
 
         <div className="bg-black/80 border border-green-900 p-4 rounded-sm space-y-2">
+          
           <div className="flex justify-between text-sm">
-            <span className="text-gray-400">Niveles completados:</span>
+            <span className="text-gray-400">Progreso:</span>
             <span className="text-green-400 font-bold">
               {levelsCompleted}/{totalLevels}
             </span>
           </div>
 
           <div className="flex justify-between text-sm">
+            <span className="text-gray-400">Correctas:</span>
+            <span className="text-green-400 font-bold">
+              {correctCount}/{totalLevels}
+            </span>
+          </div>
+
+          <div className="flex justify-between text-sm border-t border-green-900 pt-2">
             <span className="text-gray-400">Puntaje final:</span>
             <span className="text-green-400 font-bold">
               {score}
             </span>
           </div>
+
         </div>
 
         <motion.button

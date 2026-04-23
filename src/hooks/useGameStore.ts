@@ -90,7 +90,7 @@ export function useGameStore(): GameStore {
         setState("wrong");
       }
     },
-    [currentLevel]
+    [currentLevel, gameLevels]
   );
 
   const continueAfterWrong = useCallback(() => {

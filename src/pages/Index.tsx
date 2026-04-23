@@ -62,6 +62,7 @@ const Index = () => {
             score={game.score}
             levelsCompleted={game.currentLevel}
             totalLevels={game.gameLevels.length}
+            answers={game.answers}
             onRestart={game.resetGame}
           />
         )}
