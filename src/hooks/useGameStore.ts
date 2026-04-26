@@ -80,10 +80,6 @@ export function useGameStore(): GameStore {
         setLives((l) => {
           const newLives = l - 1;
 
-          if (newLives <= 0) {
-            setTimeout(() => setState("gameover"), 1500);
-          }
-
           return newLives;
         });
 
@@ -94,8 +90,12 @@ export function useGameStore(): GameStore {
   );
 
   const continueAfterWrong = useCallback(() => {
-    setState("result");
-  }, []);
+      if (lives <= 0) {
+        setState("gameover");
+      } else {
+        setState("result");
+      }
+    }, [lives]);
 
   const nextLevel = useCallback(() => {
     setCurrentLevel((prev) => {

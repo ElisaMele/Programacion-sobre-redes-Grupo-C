@@ -1,34 +1,88 @@
 import { motion } from "framer-motion";
+import { useEffect, useRef, useMemo, useState } from "react";
+
 import nedryGif from "@/assets/nedry.gif";
-import { useEffect, useRef } from "react";
+import toyStoryGif from "@/assets/algo-anda-mal-toy-story.gif";
+import jjjGif from "@/assets/jonah-jameson.gif";
 
 interface WrongAnswerScreenProps {
   explanation: string;
   onContinue: () => void;
+  isLastLife?: boolean;
+}
+
+type Meme = {
+  gif: string;
+  audio: string;
+  title: string;
+  subtitle: string;
+};
+
+const MEMES: Meme[] = [
+  {
+    gif: nedryGif,
+    audio: "/sounds/nedry.mp3",
+    title: "AH AH AH!",
+    subtitle: "You didn't say the magic word",
+  },
+  {
+    gif: toyStoryGif,
+    audio: "/sounds/algo-anda-mal.mp3",
+    title: "Algo anda mal...",
+    subtitle: "Esto no debería pasar 🤨",
+  },
+  {
+    gif: jjjGif,
+    audio: "/sounds/j-jonah-jameson-laugh.mp3",
+    title: "Jajajajaja",
+    subtitle: "¿En serio elegiste eso?",
+  },
+];
+
+let memeBag: number[] = [];
+
+function getNextMemeIndex() {
+  if (memeBag.length === 0) {
+    memeBag = [...Array(MEMES.length).keys()]
+      .sort(() => Math.random() - 0.5);
+  }
+
+  return memeBag.pop()!;
 }
 
 export function WrongAnswerScreen({
   explanation,
   onContinue,
+  isLastLife = false,
 }: WrongAnswerScreenProps) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [canContinue, setCanContinue] = useState(false);
 
-useEffect(() => {
-  const audio = new Audio("/sounds/nedry.mp3");
-  audioRef.current = audio;
-  audio.play().catch(() => {});
-
-  return () => {
-    audio.pause();
-    audio.currentTime = 0;
-  };
+  const meme = useMemo(() => {
+  const index = getNextMemeIndex();
+  return MEMES[index];
 }, []);
 
-  const handleContinue = () => {
-    if (timerRef.current) clearTimeout(timerRef.current);
-    onContinue();
-  };
+  useEffect(() => {
+    const audio = new Audio(meme.audio);
+    audioRef.current = audio;
+    audio.play().catch(() => {});
+
+    return () => {
+      audio.pause();
+      audio.currentTime = 0;
+    };
+  }, [meme]);
+
+  useEffect(() => {
+    const delay = isLastLife ? 3500 : 1500;
+
+    const timer = setTimeout(() => {
+      setCanContinue(true);
+    }, delay);
+
+    return () => clearTimeout(timer);
+  }, [isLastLife]);
 
   return (
     <motion.div
@@ -46,11 +100,9 @@ useEffect(() => {
         transition={{ type: "spring", damping: 12, stiffness: 180 }}
       >
         <motion.img
-          src={nedryGif}
-          alt="Nedry"
+          src={meme.gif}
+          alt="meme"
           className="w-52 h-52 md:w-64 md:h-64 object-contain rounded-lg mb-6"
-          animate={{ rotate: [0, -2, 2, -2, 0] }}
-          transition={{ repeat: Infinity, duration: 0.5, repeatDelay: 2 }}
         />
 
         <motion.h2
@@ -58,11 +110,11 @@ useEffect(() => {
           animate={{ opacity: [1, 0.5, 1] }}
           transition={{ repeat: Infinity, duration: 1.5 }}
         >
-          AH AH AH!
+          {meme.title}
         </motion.h2>
 
         <p className="text-lg text-white/80 text-center mb-6">
-          You didn't say the magic word
+          {meme.subtitle}
         </p>
 
         <div className="border border-red-500/30 bg-red-500/10 rounded-none p-4 mb-6 w-full">
@@ -75,12 +127,18 @@ useEffect(() => {
         </div>
 
         <motion.button
-          onClick={handleContinue}
-          className="px-6 py-2 border border-red-500 text-red-500 hover:bg-red-500/10 rounded-none transition-all"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+          onClick={onContinue}
+          disabled={!canContinue}
+          className={`px-6 py-2 border border-red-500 rounded-none transition-all
+            ${
+              canContinue
+                ? "text-red-500 hover:bg-red-500/10"
+                : "text-red-500/40 cursor-not-allowed"
+            }`}
+          whileHover={canContinue ? { scale: 1.05 } : {}}
+          whileTap={canContinue ? { scale: 0.95 } : {}}
         >
-          [ CONTINUAR ]
+          {isLastLife ? "[ VER RESULTADO ]" : "[ CONTINUAR ]"}
         </motion.button>
       </motion.div>
     </motion.div>

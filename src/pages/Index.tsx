@@ -79,6 +79,7 @@ const Index = () => {
           <WrongAnswerScreen
             explanation="Respuesta incorrecta"
             onContinue={game.continueAfterWrong}
+            isLastLife={game.lives === 0}
           />
         )}
 
