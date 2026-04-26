@@ -60,7 +60,7 @@ export function GamePlay({
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col pt-12">
 
       <div className="scanline" />
 
@@ -71,7 +71,7 @@ export function GamePlay({
         lives={lives}
       />
 
-      <div className="flex-1 flex flex-col w-full px-4 py-6">
+      <div className="flex-1 flex flex-col w-full px-4 py-4 md:py-6">
 
         <AnimatePresence mode="wait">
           <motion.div
