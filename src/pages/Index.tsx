@@ -7,6 +7,7 @@ import { GameOverScreen } from "@/components/GameOverScreen";
 import { VictoryScreen } from "@/components/VictoryScreen";
 import { MatrixRain } from "@/components/MatrixRain";
 import { WrongAnswerScreen } from "@/components/WrongAnswerScreen";
+import { BackgroundMusic } from "@/components/BackgroundMusic";
 
 const Index = () => {
   const game = useGameStore();
@@ -20,6 +21,12 @@ const Index = () => {
 
   return (
     <div className="w-full h-screen bg-black text-green-400 overflow-hidden relative">
+
+      {/* 1. AGREGAMOS EL COMPONENTE AQUÍ */}
+      <BackgroundMusic 
+        isPlaying={game.state !== "start"} 
+        isLowVolume={game.state === "wrong" || game.state === "victory"} // Agregamos "victory"
+      />
 
       <div className="absolute inset-0 z-0">
         <MatrixRain />

@@ -16,6 +16,20 @@ export const VictoryScreen = ({ score, answers, onRestart }: Props) => {
     playVictory();
   }, []);
 
+  useEffect(() => {
+  // 2. AGREGAMOS A JARVIS ACÁ:
+    const jarvisAudio = new Audio("/sounds/jarvis-bienvenida.mp3");
+    jarvisAudio.volume = 0.9; // Volumen alto para que se note el mensaje
+
+    // Lo ejecutamos con un pequeño delay opcional de 500ms 
+    // para que no se pise con el efecto inicial de playVictory()
+    const timer = setTimeout(() => {
+      jarvisAudio.play().catch(err => console.log("Error con Jarvis:", err));
+    }, 500);
+
+    return () => clearTimeout(timer); // Limpieza si el usuario sale rápido
+  }, []);
+
   const correctCount = answers.filter((a) => a.correct).length;
 
   const getRank = () => {
