@@ -70,7 +70,7 @@ Si deseas ejecutar este proyecto localmente:
    * cd [Programacion-sobre-redes-Grupo-C]
    * Instalar dependencias: **npm install**
    * Inicia el servidor de desarrollo local con el comando: **npm run dev**
-   * Una vez que el servidor esté corriendo, abre tu navegador y accede a la termnal (http://localhost:8080)
+   * Una vez que el servidor esté corriendo, abre tu navegador y accede a la terminal (http://localhost:8080)
 
 ---
 
@@ -79,6 +79,6 @@ Si deseas ejecutar este proyecto localmente:
 # 💀 ¡QUE COMIENCE EL JUEGO!
 *Haz clic abajo para entrar en la red*
 
-[**ENTRAR AL NODO**]([https://reto-redes-ifts.netlify.app/])
+[**ENTRAR AL NODO**](https://reto-redes-ifts.netlify.app/)
 
 </div>
