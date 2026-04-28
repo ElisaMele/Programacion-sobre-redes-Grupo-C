@@ -79,6 +79,6 @@ Si deseas ejecutar este proyecto localmente:
 # 💀 ¡QUE COMIENCE EL JUEGO!
 *Haz clic abajo para entrar en la red*
 
-[**ENTRAR AL NODO**]([TU_URL_DE_DESPLIEGUE_AQUÍ])
+[**ENTRAR AL NODO**]([https://reto-redes-ifts.netlify.app/])
 
 </div>
