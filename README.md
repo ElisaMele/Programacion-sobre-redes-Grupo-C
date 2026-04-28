@@ -1,73 +1,84 @@
-# React + TypeScript + Vite
+# NETWORK ESCAPE ROOM
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+[![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
 
-Currently, two official plugins are available:
+**"Has sido atrapado dentro de una red corporativa. Resuelve los desafíos para escapar."**
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Una aplicación interactiva de aprendizaje gamificado sobre redes y ciberseguridad, diseñada con una estética de terminal hacker.
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Vista Previa
+![VideoGif del Juego](./docs/video-demo.gif)
+*Vista previa del flujo principal del juego.*
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Características Principales
+* **Desafíos Técnicos:** 10 niveles que cubren temas como Modelo OSI, Protocolos (STP, TCP/IP) y Topologías.
+* **Gamificación Real:** Sistema de vidas (3), temporizador de 60 segundos y bonos por velocidad.
+* **Feedback Hum some:** Integración de memes icónicos (Jurassic Park, Spider-Man, Toy Story) para las respuestas incorrectas.
+* **Audio Inmersivo:** Banda sonora dinámica de AC/DC y asistente virtual JARVIS al finalizar con éxito.
+* **Diseño Responsive:** Interfaz inspirada en la "Matrix" con lluvia de código y efectos neón.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+---
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Tecnologías Utilizadas
+* **React.js** - Estructura de la aplicación y hooks.
+* **Tailwind CSS** - Estilos y diseño "Hacker UI".
+* **Framer Motion** - Animaciones y transiciones de pantalla.
+* **Lucide React** - Iconografía técnica.
+* **TanStack Query** - Gestión de estados y navegación.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+---
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Galería del Proyecto
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+A continuación, se muestran las diferentes interfaces del sistema de escape:
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+<div align="center">
+
+| Pantalla de Inicio | Desafío Técnico | Feedback de Nodo |
+|:---:|:---:|:---:|
+| ![Inicio](./docs/captura-inicio.png) | ![Pregunta](./docs/captura-pregunta.png) | ![Feedback](./docs/captura-feedback-tecnico.png) |
+
+<br>
+
+| Respuesta Incorrecta | Estadísticas Finales |
+|:---:|:---:|
+| ![Meme](./docs/captura-meme.png) | ![Estadísticas](./docs/captura-estadistica.png) |
+
+</div>
+
+---
+
+## Instalación y uso Local
+Si deseas ejecutar este proyecto localmente:
+
+### Requisitos Previos
+* **Node.js:** Debes tener instalada la versión **18.0.0** o superior. [Descargar Node.js](https://nodejs.org/).
+* **npm:** El gestor de paquetes de Node (viene incluido con Node.js).
+* **Git:** Para clonar el repositorio en tu máquina.
+
+### Pasos a seguir
+
+* **Clonar el repositorio:**
+   * Abre la consola de comandos o tu ide favorito y ejecuta el siguiente comando:
+   * git clone [https://github.com/ElisaMele/Programacion-sobre-redes-Grupo-C]
+   * cd [Programacion-sobre-redes-Grupo-C]
+   * Instalar dependencias: **npm install**
+   * Inicia el servidor de desarrollo local con el comando: **npm run dev**
+   * Una vez que el servidor esté corriendo, abre tu navegador y accede a la termnal (http://localhost:8080)
+
+---
+
+<div align="center">
+
+# 💀 ¡QUE COMIENCE EL JUEGO!
+*Haz clic abajo para entrar en la red*
+
+[**ENTRAR AL NODO**]([TU_URL_DE_DESPLIEGUE_AQUÍ])
+
+</div>
